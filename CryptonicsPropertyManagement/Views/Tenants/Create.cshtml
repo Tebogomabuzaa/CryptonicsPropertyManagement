@@ -1,0 +1,52 @@
+﻿@model CryptonicsPropertyManagement.Models.Entities.Tenant
+
+@{
+    ViewData["Title"] = "Register Tenant";
+}
+
+<div class="container mt-4">
+    <h2>Register New Tenant</h2>
+    <hr />
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Create" method="post">
+                <div class="row mb-3">
+                    <div class="col">
+                        <label asp-for="FirstName" class="form-label">First Name</label>
+                        <input asp-for="FirstName" class="form-control" required />
+                    </div>
+                    <div class="col">
+                        <label asp-for="LastName" class="form-label">Last Name</label>
+                        <input asp-for="LastName" class="form-control" required />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="EmailAddress" class="form-label">Email Address</label>
+                    <input asp-for="EmailAddress" type="email" class="form-control" required />
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col">
+                        <label asp-for="PassportIDNumber" class="form-label">Passport / ID Number</label>
+                        <input asp-for="PassportIDNumber" class="form-control" required />
+                        <small class="text-muted">Type "REJECT" to simulate a fraudulent ID.</small>
+                    </div>
+                    <div class="col">
+                        <label asp-for="Nationality" class="form-label">Nationality</label>
+                        <input asp-for="Nationality" class="form-control" required />
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="DeclaredMonthlyIncome" class="form-label">Declared Monthly Income (ZAR)</label>
+                    <input asp-for="DeclaredMonthlyIncome" type="number" step="0.01" class="form-control" required />
+                    <small class="text-muted">Must be over R5,000 to pass simulated checks.</small>
+                </div>
+
+                <button type="submit" class="btn btn-success">Register Tenant</button>
+                <a asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
