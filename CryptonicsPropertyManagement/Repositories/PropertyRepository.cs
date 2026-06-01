@@ -44,7 +44,7 @@ namespace CryptonicsPropertyManagement.Repositories
                             PropertyDescription = Convert.ToString(reader["PropertyDescription"]),
                             PhysicalAddress = Convert.ToString(reader["PhysicalAddress"]),
                             OwnerID = Convert.ToInt32(reader["OwnerID"]),
-                            MonthlyRentAmount = Convert.ToDecimal(reader["MonthlyRentAmount"]),
+                            MonthlyRent = Convert.ToDecimal(reader["MonthlyRent"]),
                             VacancyStatus = Convert.ToBoolean(reader["VacancyStatus"]),
                             // This comes from the JOIN, not the Properties table directly
                             OwnerName = Convert.ToString(reader["OwnerName"])
@@ -63,7 +63,7 @@ namespace CryptonicsPropertyManagement.Repositories
                 await conn.OpenAsync();
 
                 // Using '?' as parameters prevents SQL injection attacks. We never concatenate user input directly into SQL strings.
-                var sql = @"INSERT INTO Properties (PropertyDescription, PhysicalAddress, OwnerID, MonthlyRentAmount, VacancyStatus) 
+                var sql = @"INSERT INTO Properties (PropertyDescription, PhysicalAddress, OwnerID, MonthlyRent, VacancyStatus) 
                             VALUES (?, ?, ?, ?, ?)";
 
                 using (var cmd = new OleDbCommand(sql, conn))
@@ -72,7 +72,7 @@ namespace CryptonicsPropertyManagement.Repositories
                     cmd.Parameters.AddWithValue("@desc", property.PropertyDescription);
                     cmd.Parameters.AddWithValue("@addr", property.PhysicalAddress);
                     cmd.Parameters.AddWithValue("@ownerId", property.OwnerID);
-                    cmd.Parameters.AddWithValue("@rent", property.MonthlyRentAmount);
+                    cmd.Parameters.AddWithValue("@rent", property.MonthlyRent);
                     cmd.Parameters.AddWithValue("@vacant", property.VacancyStatus);
                     await cmd.ExecuteNonQueryAsync();
                 }
