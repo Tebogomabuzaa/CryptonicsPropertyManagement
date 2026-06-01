@@ -66,5 +66,32 @@ namespace CryptonicsPropertyManagement.Repositories
                 }
             }
         }
+
+        public async Task<int> AddAsync(Tenant tenant)
+        {
+            using (var conn = _db.GetConnection())
+            {
+                await conn.OpenAsync();
+                var sql = @"INSERT INTO Tenants (FirstName, LastName, EmailAddress, PassportIDNumber, Nationality, DeclaredMonthlyIncome, VerificationStatus) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+                using (var cmd = new OleDbCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@first", tenant.FirstName);
+                    cmd.Parameters.AddWithValue("@last", tenant.LastName);
+                    cmd.Parameters.AddWithValue("@email", tenant.EmailAddress);
+                    cmd.Parameters.AddWithValue("@passport", tenant.PassportIDNumber);
+                    cmd.Parameters.AddWithValue("@nat", tenant.Nationality);
+                    cmd.Parameters.AddWithValue("@income", tenant.DeclaredMonthlyIncome);
+                    cmd.Parameters.AddWithValue("@status", "Pending");
+                    await cmd.ExecuteNonQueryAsync();
+                }
+
+                using (var idCmd = new OleDbCommand("SELECT @@IDENTITY", conn))
+                {
+                    return Convert.ToInt32(await idCmd.ExecuteScalarAsync());
+                }
+            }
+        }
     }
 }
