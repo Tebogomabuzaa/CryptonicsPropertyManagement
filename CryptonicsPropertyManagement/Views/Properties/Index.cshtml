@@ -1,0 +1,56 @@
+﻿@model IEnumerable<CryptonicsPropertyManagement.Models.Entities.Property>
+
+@{
+    ViewData["Title"] = "Properties Dashboard";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Luxury Property Portfolio</h2>
+        <a asp-action="Create" class="btn btn-primary">+ Add New Property</a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover table-striped mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Description</th>
+                        <th>Address</th>
+                        <th>Owner</th>
+                        <th>Monthly Rent</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.PropertyID</td>
+                            <td>@item.PropertyDescription</td>
+                            <td>@item.PhysicalAddress</td>
+                            <td>@item.OwnerName</td>
+                            <td>@item.MonthlyRent.ToString("C2", new System.Globalization.CultureInfo("en-ZA"))</td>
+                            <td>
+                                @if (item.VacancyStatus)
+                                {
+                                    <span class="badge bg-danger">Vacant</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">Occupied</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
