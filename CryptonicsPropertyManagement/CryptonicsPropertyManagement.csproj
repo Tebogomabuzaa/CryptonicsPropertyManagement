@@ -15,7 +15,6 @@
     <Folder Include="Views\Reports\" />
     <Folder Include="Views\Settlements\" />
     <Folder Include="Views\Owners\" />
-    <Folder Include="Views\Tenants\" />
     <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
