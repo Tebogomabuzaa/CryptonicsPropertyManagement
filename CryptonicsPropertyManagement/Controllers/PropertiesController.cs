@@ -1,7 +1,7 @@
-﻿// Controllers/PropertiesController.cs
-using CryptonicsPropertyManagement.Models.Entities;
+﻿using CryptonicsPropertyManagement.Models.Entities;
 using CryptonicsPropertyManagement.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 
 namespace CryptonicsPropertyManagement.Controllers
@@ -17,22 +17,17 @@ namespace CryptonicsPropertyManagement.Controllers
             _ownerRepo = ownerRepo;
         }
 
-        // GET: /Properties - Loads the main dashboard table
         public async Task<IActionResult> Index()
         {
-            var properties = await _propertyRepo.GetAllAsync();
-            return View(properties);
+            return View(await _propertyRepo.GetAllAsync());
         }
 
-        // GET: /Properties/Create - Loads the blank form to add a new property
         public async Task<IActionResult> Create()
         {
-            // We pass the list of owners to the View via ViewBag for the dropdown
             ViewBag.Owners = await _ownerRepo.GetAllAsync();
             return View();
         }
 
-        // POST: /Properties/Create - Handles the form submission when the user clicks "Save"
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Property property)
@@ -49,13 +44,51 @@ namespace CryptonicsPropertyManagement.Controllers
                 TempData["Success"] = $"Property successfully added. ID: {newId}";
                 return RedirectToAction(nameof(Index));
             }
-            catch (System.InvalidOperationException ex)
+            catch (InvalidOperationException ex)
             {
-                // This catches the duplicate address error we wrote in the repository!
                 ModelState.AddModelError("PhysicalAddress", ex.Message);
                 ViewBag.Owners = await _ownerRepo.GetAllAsync();
                 return View(property);
             }
+        }
+
+        public async Task<IActionResult> Edit(int id)
+        {
+            var property = await _propertyRepo.GetByIdAsync(id);
+            if (property == null) return NotFound();
+            ViewBag.Owners = await _ownerRepo.GetAllAsync();
+            return View(property);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Property property)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Owners = await _ownerRepo.GetAllAsync();
+                return View(property);
+            }
+
+            await _propertyRepo.UpdateAsync(property);
+            TempData["Success"] = $"Property ID {property.PropertyID} successfully updated.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            var property = await _propertyRepo.GetByIdAsync(id);
+            if (property == null) return NotFound();
+            return View(property);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            await _propertyRepo.DeleteAsync(id);
+            TempData["Success"] = $"Property ID {id} successfully deleted.";
+            return RedirectToAction(nameof(Index));
         }
     }
 }

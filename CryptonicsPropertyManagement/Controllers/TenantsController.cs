@@ -1,9 +1,9 @@
-﻿// Controllers/TenantsController.cs
-using System.Threading.Tasks;
-using CryptonicsPropertyManagement.Models.Entities;
+﻿using CryptonicsPropertyManagement.Models.Entities;
 using CryptonicsPropertyManagement.Repositories;
 using CryptonicsPropertyManagement.Services;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
 
 namespace CryptonicsPropertyManagement.Controllers
 {
@@ -18,43 +18,71 @@ namespace CryptonicsPropertyManagement.Controllers
             _kycService = kycService;
         }
 
-        // GET: /Tenants
-        public async Task<IActionResult> Index()
-        {
-            var tenants = await _tenantRepo.GetAllAsync();
-            return View(tenants);
-        }
+        public async Task<IActionResult> Index() => View(await _tenantRepo.GetAllAsync());
 
-        // GET: /Tenants/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
+        public IActionResult Create() => View();
 
-        // POST: /Tenants/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Tenant tenant)
         {
             if (!ModelState.IsValid) return View(tenant);
 
-            await _tenantRepo.AddAsync(tenant);
-            TempData["Success"] = "New tenant successfully registered and is awaiting KYC verification.";
+            try
+            {
+                tenant.VerificationStatus = "Pending";
+                int newId = await _tenantRepo.AddAsync(tenant);
+                TempData["Success"] = $"New tenant registered. Tenant ID: {newId}. Awaiting KYC verification.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError("PassportIDNumber", ex.Message);
+                return View(tenant);
+            }
+        }
+
+        public async Task<IActionResult> Edit(int id)
+        {
+            var tenant = await _tenantRepo.GetByIdAsync(id);
+            if (tenant == null) return NotFound();
+            return View(tenant);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Tenant tenant)
+        {
+            if (!ModelState.IsValid) return View(tenant);
+
+            await _tenantRepo.UpdateAsync(tenant);
+            TempData["Success"] = $"Tenant ID {tenant.TenantID} successfully updated.";
             return RedirectToAction(nameof(Index));
         }
 
-        // POST: /Tenants/RunKyc
-        // This triggers your Mock API business logic!
+        public async Task<IActionResult> Delete(int id)
+        {
+            var tenant = await _tenantRepo.GetByIdAsync(id);
+            if (tenant == null) return NotFound();
+            return View(tenant);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            await _tenantRepo.DeleteAsync(id);
+            TempData["Success"] = $"Tenant ID {id} successfully deleted.";
+            return RedirectToAction(nameof(Index));
+        }
+
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> RunKyc(int tenantId, string passport, decimal income)
         {
-            // 1. Run the simulated API check (pauses for 2 seconds automatically)
             string resultStatus = await _kycService.VerifyTenantAsync(passport, income);
-
-            // 2. Safely update only the verification field in MS Access
             await _tenantRepo.UpdateKycStatusAsync(tenantId, resultStatus);
 
-            // 3. Return to the dashboard with the result
             TempData["Success"] = $"Automated KYC Check Complete: {resultStatus}";
             return RedirectToAction(nameof(Index));
         }

@@ -1,6 +1,6 @@
-﻿// Repositories/ManagerRepository.cs
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.OleDb;
 using System.Threading.Tasks;
 using CryptonicsPropertyManagement.Helpers;
@@ -10,51 +10,111 @@ namespace CryptonicsPropertyManagement.Repositories
 {
     public class ManagerRepository
     {
-        // This private variable holds our connection to the database
         private readonly DatabaseHelper _db;
 
-        // Constructor: Dependency Injection passes the DatabaseHelper in automatically
-        public ManagerRepository(DatabaseHelper db)
-        {
-            _db = db;
-        }
+        public ManagerRepository(DatabaseHelper db) => _db = db;
 
-        // Retrieves a list of all Property Managers from the Access Database.
         public async Task<List<PropertyManager>> GetAllAsync()
         {
             var list = new List<PropertyManager>();
-
-            // 1. Get the connection string and wrap it in a 'using' statement to ensure it safely closes even if the database crashes.
             using (var conn = _db.GetConnection())
             {
-                // 2. Open the connection to the .accdb file asynchronously
                 await conn.OpenAsync();
-
-                // 3. Write the raw SQL query
-                var sql = "SELECT * FROM PropertyManagers";
-
-                // 4. Create the command and execute the reader to read rows one by one
-                using (var cmd = new OleDbCommand(sql, conn))
+                using (var cmd = new OleDbCommand("SELECT * FROM PropertyManagers", conn))
                 using (var reader = await cmd.ExecuteReaderAsync())
                 {
-                    // 5. Loop through every row the database returns
                     while (await reader.ReadAsync())
+                        list.Add(MapManager(reader));
+                }
+            }
+            return list;
+        }
+
+        public async Task<PropertyManager> GetByIdAsync(int id)
+        {
+            using (var conn = _db.GetConnection())
+            {
+                await conn.OpenAsync();
+                using (var cmd = new OleDbCommand("SELECT * FROM PropertyManagers WHERE ManagerID = ?", conn))
+                {
+                    cmd.Parameters.AddWithValue("@id", id);
+                    using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        // Map the raw database columns into our clean C# object
-                        list.Add(new PropertyManager
-                        {
-                            ManagerID = Convert.ToInt32(reader["ManagerID"]),
-                            FirstName = Convert.ToString(reader["FirstName"]),
-                            LastName = Convert.ToString(reader["LastName"]),
-                            EmailAddress = Convert.ToString(reader["EmailAddress"]),
-                            ContactNumber = Convert.ToString(reader["ContactNumber"])
-                        });
+                        if (await reader.ReadAsync())
+                            return MapManager(reader);
                     }
                 }
             }
+            return null;
+        }
 
-            // 6. Return the fully populated list to the web page
-            return list;
+        public async Task<int> AddAsync(PropertyManager manager)
+        {
+            using (var conn = _db.GetConnection())
+            {
+                await conn.OpenAsync();
+                var sql = @"INSERT INTO PropertyManagers (FirstName, LastName, EmailAddress) 
+                            VALUES (?, ?, ?)";
+
+                using (var cmd = new OleDbCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@first", manager.FirstName);
+                    cmd.Parameters.AddWithValue("@last", manager.LastName);
+                    cmd.Parameters.AddWithValue("@email", manager.EmailAddress);
+                    await cmd.ExecuteNonQueryAsync();
+                }
+
+                using (var idCmd = new OleDbCommand("SELECT @@IDENTITY", conn))
+                    return Convert.ToInt32(await idCmd.ExecuteScalarAsync());
+            }
+        }
+
+        public async Task UpdateAsync(PropertyManager manager)
+        {
+            using (var conn = _db.GetConnection())
+            {
+                await conn.OpenAsync();
+                var sql = @"UPDATE PropertyManagers SET FirstName = ?, LastName = ?, EmailAddress = ? 
+                            WHERE ManagerID = ?";
+
+                using (var cmd = new OleDbCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@first", manager.FirstName);
+                    cmd.Parameters.AddWithValue("@last", manager.LastName);
+                    cmd.Parameters.AddWithValue("@email", manager.EmailAddress);
+                    cmd.Parameters.AddWithValue("@id", manager.ManagerID);
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        public async Task DeleteAsync(int managerId)
+        {
+            using (var conn = _db.GetConnection())
+            {
+                await conn.OpenAsync();
+                using (var cmd = new OleDbCommand("DELETE FROM PropertyManagers WHERE ManagerID = ?", conn))
+                {
+                    cmd.Parameters.AddWithValue("@id", managerId);
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        private static PropertyManager MapManager(DbDataReader reader)
+        {
+            var manager = new PropertyManager
+            {
+                ManagerID = Convert.ToInt32(reader["ManagerID"]),
+                FirstName = Convert.ToString(reader["FirstName"]),
+                LastName = Convert.ToString(reader["LastName"]),
+                EmailAddress = Convert.ToString(reader["EmailAddress"])
+            };
+
+            if (reader.HasColumn("ContactNumber"))
+                manager.ContactNumber = Convert.ToString(reader["ContactNumber"]);
+
+            return manager;
         }
     }
 }

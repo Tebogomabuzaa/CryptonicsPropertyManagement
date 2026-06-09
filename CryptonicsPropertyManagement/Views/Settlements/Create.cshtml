@@ -1,0 +1,42 @@
+@{ ViewData["Title"] = "Process Settlement"; }
+
+<h2>Calculate Split-Payment Settlement</h2>
+<p class="text-muted">Net = Gross Rent − Maintenance · Fee = Net × 12% · Owner Payout = Net − Fee</p>
+<hr />
+
+<form asp-action="Create" method="post" class="col-md-6">
+    <div class="mb-3">
+        <label class="form-label">Lease Agreement</label>
+        <select name="leaseId" id="leaseSelect" class="form-select" required>
+            <option value="">-- Select Active Lease --</option>
+            @foreach (var l in ViewBag.Leases)
+            {
+                <option value="@l.LeaseID" data-rent="@l.RentAmount">Lease #@l.LeaseID — @l.PropertyAddress (@l.TenantName)</option>
+            }
+        </select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Monthly Rent (ZAR)</label>
+        <input name="monthlyRent" id="monthlyRent" type="number" step="0.01" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Maintenance Costs (ZAR)</label>
+        <input name="maintenanceCosts" type="number" step="0.01" class="form-control" value="0" required />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Days Occupied (30 = full month)</label>
+        <input name="daysOccupied" type="number" min="1" max="31" class="form-control" value="30" required />
+    </div>
+    <button type="submit" class="btn btn-success">Calculate &amp; Save Settlement</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+<script>
+    document.getElementById('leaseSelect').addEventListener('change', function () {
+        var opt = this.options[this.selectedIndex];
+        var rent = opt.getAttribute('data-rent');
+        if (rent) document.getElementById('monthlyRent').value = rent;
+    });
+</script>
+}

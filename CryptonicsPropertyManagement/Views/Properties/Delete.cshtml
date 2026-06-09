@@ -1,0 +1,18 @@
+@model CryptonicsPropertyManagement.Models.Entities.Property
+@{ ViewData["Title"] = "Delete Property"; }
+
+<h2 class="text-danger">Delete Property</h2>
+<p>Are you sure you want to permanently remove this property?</p>
+
+<dl class="row">
+    <dt class="col-sm-3">ID</dt><dd class="col-sm-9">@Model.PropertyID</dd>
+    <dt class="col-sm-3">Description</dt><dd class="col-sm-9">@Model.PropertyDescription</dd>
+    <dt class="col-sm-3">Address</dt><dd class="col-sm-9">@Model.PhysicalAddress</dd>
+    <dt class="col-sm-3">Monthly Rent</dt><dd class="col-sm-9">@Model.MonthlyRent.ToString("C2", new System.Globalization.CultureInfo("en-ZA"))</dd>
+</dl>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="PropertyID" />
+    <button type="submit" class="btn btn-danger">Confirm Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

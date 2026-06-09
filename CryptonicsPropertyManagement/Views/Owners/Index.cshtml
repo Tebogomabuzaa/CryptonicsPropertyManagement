@@ -1,0 +1,29 @@
+@model IEnumerable<CryptonicsPropertyManagement.Models.Entities.Owner>
+@{ ViewData["Title"] = "Property Owners"; }
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Property Owners</h2>
+    <a asp-action="Create" class="btn btn-primary">+ Add Owner</a>
+</div>
+@if (TempData["Success"] != null) { <div class="alert alert-success">@TempData["Success"]</div> }
+
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
+        <tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.OwnerID</td>
+            <td>@item.FullName</td>
+            <td>@item.EmailAddress</td>
+            <td>@item.ContactNumber</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.OwnerID" class="btn btn-sm btn-outline-secondary">Edit</a>
+                <a asp-action="Delete" asp-route-id="@item.OwnerID" class="btn btn-sm btn-outline-danger">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

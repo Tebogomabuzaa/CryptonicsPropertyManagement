@@ -1,3 +1,6 @@
+using CryptonicsPropertyManagement.Helpers;
+using CryptonicsPropertyManagement.Repositories;
+using CryptonicsPropertyManagement.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -25,6 +28,20 @@ namespace CryptonicsPropertyManagement
         {
             services.AddControllersWithViews();
 
+            services.AddSingleton<DatabaseHelper>();
+
+            services.AddScoped<PropertyRepository>();
+            services.AddScoped<OwnerRepository>();
+            services.AddScoped<TenantRepository>();
+            services.AddScoped<ManagerRepository>();
+            services.AddScoped<LeaseRepository>();
+            services.AddScoped<SettlementRepository>();
+            services.AddScoped<UserRepository>();
+
+            services.AddScoped<SettlementService>();
+            services.AddScoped<KycService>();
+            services.AddScoped<CryptoInvoiceService>();
+            services.AddScoped<ReportService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

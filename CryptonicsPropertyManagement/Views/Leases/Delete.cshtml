@@ -1,0 +1,10 @@
+@model CryptonicsPropertyManagement.Models.Entities.LeaseAgreement
+@{ ViewData["Title"] = "Delete Lease"; }
+
+<h2 class="text-danger">Delete Lease Agreement</h2>
+<p>Are you sure you want to permanently remove Lease #@Model.LeaseID?</p>
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="LeaseID" />
+    <button type="submit" class="btn btn-danger">Confirm Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

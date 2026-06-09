@@ -1,0 +1,10 @@
+@model CryptonicsPropertyManagement.Models.Entities.PropertyManager
+@{ ViewData["Title"] = "Delete Manager"; }
+
+<h2 class="text-danger">Delete Manager</h2>
+<p>Are you sure you want to permanently remove <strong>@Model.FullName</strong>?</p>
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="ManagerID" />
+    <button type="submit" class="btn btn-danger">Confirm Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

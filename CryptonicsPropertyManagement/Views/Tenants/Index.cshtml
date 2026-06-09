@@ -50,17 +50,19 @@
                                     <span class="badge bg-danger">@item.VerificationStatus</span>
                                 }
                             </td>
-                            <td>
+                            <td class="text-nowrap">
                                 <form asp-action="RunKyc" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
                                     <input type="hidden" name="tenantId" value="@item.TenantID" />
                                     <input type="hidden" name="passport" value="@item.PassportIDNumber" />
                                     <input type="hidden" name="income" value="@item.DeclaredMonthlyIncome" />
-
                                     <button type="submit" class="btn btn-sm btn-outline-primary"
                                             @(item.VerificationStatus == "Approved" ? "disabled" : "")>
-                                        Run KYC Check
+                                        Run KYC
                                     </button>
                                 </form>
+                                <a asp-action="Edit" asp-route-id="@item.TenantID" class="btn btn-sm btn-outline-secondary">Edit</a>
+                                <a asp-action="Delete" asp-route-id="@item.TenantID" class="btn btn-sm btn-outline-danger">Delete</a>
                             </td>
                         </tr>
                     }

@@ -1,0 +1,46 @@
+@{ ViewData["Title"] = "Help"; }
+
+<h2>CryptoniCS Help</h2>
+<hr />
+
+<div class="accordion" id="helpAccordion">
+    <div class="card mb-2">
+        <div class="card-header"><strong>Properties &amp; Owners</strong></div>
+        <div class="card-body">
+            Use <em>Properties</em> to add luxury rental units and link each to an owner.
+            Register international investors under <em>Owners</em> before creating properties.
+        </div>
+    </div>
+    <div class="card mb-2">
+        <div class="card-header"><strong>Tenant Vetting (KYC)</strong></div>
+        <div class="card-body">
+            Register tenants, then click <strong>Run KYC</strong> on the Tenants screen.
+            The simulated API checks passport, nationality, and minimum income (R5,000).
+            Type <code>REJECT</code> as passport to simulate a declined ID.
+        </div>
+    </div>
+    <div class="card mb-2">
+        <div class="card-header"><strong>Leases &amp; Settlements</strong></div>
+        <div class="card-body">
+            Create a lease linking property, approved tenant, and manager.
+            Process monthly settlements under <em>Settlements</em> — the system applies pro-rata rent,
+            deducts maintenance, takes the 12% Atlas fee, and generates a unique crypto invoice link.
+        </div>
+    </div>
+    <div class="card mb-2">
+        <div class="card-header"><strong>Co-Host Performance Report</strong></div>
+        <div class="card-body">
+            Under <em>Reports</em>, select a date range and generate the bar chart.
+            Green bars (≥70%) indicate strong occupancy; red bars flag underperformance.
+            Use Print to save as PDF for owner review meetings.
+        </div>
+    </div>
+    <div class="card mb-2">
+        <div class="card-header"><strong>Database Location</strong></div>
+        <div class="card-body">
+            The system connects to Microsoft Access at
+            <code>C:\CryptoniCS\CryptoniCS_DB.accdb</code> (configurable in appsettings.json).
+            Ensure the ACE OLEDB 12.0 x64 driver is installed.
+        </div>
+    </div>
+</div>

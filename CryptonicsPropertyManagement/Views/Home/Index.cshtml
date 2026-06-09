@@ -1,8 +1,39 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@{ ViewData["Title"] = "Dashboard"; }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center py-4">
+    <h1 class="display-5 fw-bold">CryptoniCS</h1>
+    <p class="lead text-muted">Atlas Premier Properties — Property Management System</p>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Master Data</h5>
+                <p class="card-text">Manage properties, owners, tenants, and co-host managers.</p>
+                <a asp-controller="Properties" asp-action="Index" class="btn btn-outline-primary btn-sm">Properties</a>
+                <a asp-controller="Owners" asp-action="Index" class="btn btn-outline-primary btn-sm">Owners</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Leasing &amp; Vetting</h5>
+                <p class="card-text">Register tenants, run simulated KYC checks, and create lease agreements.</p>
+                <a asp-controller="Tenants" asp-action="Index" class="btn btn-outline-primary btn-sm">Tenants</a>
+                <a asp-controller="Leases" asp-action="Index" class="btn btn-outline-primary btn-sm">Leases</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Finance &amp; Reports</h5>
+                <p class="card-text">Split-payment settlements, crypto invoices, and co-host performance charts.</p>
+                <a asp-controller="Settlements" asp-action="Index" class="btn btn-outline-primary btn-sm">Settlements</a>
+                <a asp-controller="Reports" asp-action="CoHostPerformance" class="btn btn-outline-primary btn-sm">Reports</a>
+            </div>
+        </div>
+    </div>
 </div>

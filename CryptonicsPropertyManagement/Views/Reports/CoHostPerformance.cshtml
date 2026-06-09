@@ -1,0 +1,77 @@
+@model List<CryptonicsPropertyManagement.Services.CoHostStats>
+@{ ViewData["Title"] = "Co-Host Performance"; }
+
+<h2>Co-Host Performance Metrics</h2>
+<p class="text-muted">Occupancy Rate = (Days Occupied ÷ Total Days in Period) × 100</p>
+
+<form asp-action="CoHostPerformance" method="post" class="row g-3 mb-4">
+    @Html.AntiForgeryToken()
+    <div class="col-md-3">
+        <label class="form-label">Report Period</label>
+        <select name="periodType" class="form-control">
+            <option value="custom">Custom Range</option>
+            <option value="monthly">Monthly</option>
+            <option value="quarterly">Quarterly</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Start Date</label>
+        <input type="date" name="startDate" class="form-control" required />
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">End Date</label>
+        <input type="date" name="endDate" class="form-control" required />
+    </div>
+    <div class="col-md-3 d-flex align-items-end">
+        <button type="submit" class="btn btn-primary w-100">Generate Co-Host Report</button>
+    </div>
+</form>
+
+@if (ViewBag.ChartJson != null)
+{
+    <h4>@ViewBag.StartDate to @ViewBag.EndDate</h4>
+    <div class="mb-3 no-print">
+        <button type="button" class="btn btn-outline-secondary" onclick="window.print()">Export to PDF (Print)</button>
+    </div>
+    <canvas id="coHostChart" style="max-height:400px;"></canvas>
+
+    @if (Model != null && Model.Count > 0)
+    {
+        <table class="table table-striped mt-4">
+            <thead><tr><th>Manager</th><th>Days Occupied</th><th>Total Days</th><th>Occupancy %</th></tr></thead>
+            <tbody>
+            @foreach (var row in Model)
+            {
+                <tr>
+                    <td>@row.ManagerName</td>
+                    <td>@row.DaysOccupied</td>
+                    <td>@row.TotalDays</td>
+                    <td class="@(row.OccupancyRate >= 70 ? "text-success" : "text-danger") fw-bold">@row.OccupancyRate%</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+
+    @section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var d = @Html.Raw(ViewBag.ChartJson);
+        new Chart(document.getElementById('coHostChart'), {
+            type: 'bar',
+            data: {
+                labels: d.labels,
+                datasets: [{
+                    label: 'Occupancy Rate (%)',
+                    data: d.rates,
+                    backgroundColor: d.colors
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: { y: { beginAtZero: true, max: 100 } }
+            }
+        });
+    </script>
+    }
+}

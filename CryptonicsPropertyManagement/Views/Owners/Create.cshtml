@@ -1,0 +1,15 @@
+@model CryptonicsPropertyManagement.Models.Entities.Owner
+@{ ViewData["Title"] = "Add Owner"; }
+
+<h2>Add New Owner</h2>
+<hr />
+<form asp-action="Create" method="post" class="col-md-6">
+    <div class="row mb-3">
+        <div class="col"><label asp-for="FirstName" class="form-label"></label><input asp-for="FirstName" class="form-control" required /></div>
+        <div class="col"><label asp-for="LastName" class="form-label"></label><input asp-for="LastName" class="form-control" required /></div>
+    </div>
+    <div class="mb-3"><label asp-for="EmailAddress" class="form-label"></label><input asp-for="EmailAddress" type="email" class="form-control" required /></div>
+    <div class="mb-3"><label asp-for="ContactNumber" class="form-label">Phone Number</label><input asp-for="ContactNumber" class="form-control" /></div>
+    <button type="submit" class="btn btn-success">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

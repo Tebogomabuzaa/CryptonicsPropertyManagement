@@ -1,0 +1,36 @@
+@model IEnumerable<CryptonicsPropertyManagement.Models.Entities.LeaseAgreement>
+@{ ViewData["Title"] = "Lease Agreements"; }
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Lease Agreements</h2>
+    <a asp-action="Create" class="btn btn-primary">+ New Lease</a>
+</div>
+@if (TempData["Success"] != null) { <div class="alert alert-success">@TempData["Success"]</div> }
+
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th><th>Property</th><th>Tenant</th><th>Manager</th>
+            <th>Start</th><th>End</th><th>Rent</th><th>Status</th><th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.LeaseID</td>
+            <td>@item.PropertyAddress</td>
+            <td>@item.TenantName</td>
+            <td>@item.ManagerName</td>
+            <td>@item.StartDate.ToString("dd MMM yyyy")</td>
+            <td>@item.EndDate.ToString("dd MMM yyyy")</td>
+            <td>@item.RentAmount.ToString("C2", new System.Globalization.CultureInfo("en-ZA"))</td>
+            <td><span class="badge bg-info text-dark">@item.LeaseStatus</span></td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.LeaseID" class="btn btn-sm btn-outline-secondary">Edit</a>
+                <a asp-action="Delete" asp-route-id="@item.LeaseID" class="btn btn-sm btn-outline-danger">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
